@@ -1,28 +1,35 @@
 <template>
   <div id="app">
     <Search />  
-    <Playlist />  
-    <Lyrics />  
+    <main>
+      <Playlist />  
+      <Lyrics />  
+    </main>
+    
   </div>
 </template>
 
 <script>
-import Search from './components/Search.vue'
-import Playlist from './components/Playlist.vue'
-import Lyrics from './components/Lyrics.vue'
+import Search from "./components/Search.vue";
+import Playlist from "./components/Playlist.vue";
+import Lyrics from "./components/Lyrics.vue";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
     Search,
     Playlist,
     Lyrics
   }
-}
+};
 </script>
 
 <style lang="scss">
 body {
+  margin: 0;
+}
+
+h1, h2, h3, h4, p {
   margin: 0;
 }
 
@@ -31,11 +38,16 @@ header {
 }
 
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   max-width: 1440px;
   margin: 0 auto;
   padding: 0 60px;
 }
+
+main {
+  display: flex;
+}
+
 </style>
