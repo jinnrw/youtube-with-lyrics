@@ -9,10 +9,9 @@
         </div>
         <div class="titles">
           <h4 class="video-title">{{ video.snippet.title }}</h4>
-          <p class="channel-title">{{ videoDuration[i] }}</p>
+         <p>{{ videoChannelTitle[i] }}</p>
         </div>
-        
-        <h4>{{ videoChannelTitle[i] }}</h4>
+        <p class="channel-title">{{ durationConvert(videoDuration[i]) }}</p>
       </div>
     </div>
   </div>
@@ -20,6 +19,8 @@
 
 <script>
 import axios from "axios";
+var moment = require('moment');
+var momentDurationFormatSetup = require("moment-duration-format");
 
 export default {
   name: "Playlist",
@@ -63,8 +64,6 @@ export default {
           .catch(function(error) {
             console.log(error);
           });
-
-        console.log("get playist: " + request);
         return request;
       },
       getVideoID: () => {
@@ -83,7 +82,6 @@ export default {
               params: options
             })
             .then(response => {
-              console.log(response.data.items.contentDetails);
               let videoDetails = response.data.items;
               for (let i = 0; i < videoDetails.length; i++) {
                 let duration = videoDetails[i].contentDetails.duration;
@@ -121,6 +119,11 @@ export default {
     },
     updateVideo(id) {
       this.embedVideo(id);
+    },
+    durationConvert(time) {
+      return(
+        moment.duration(time, "minutes").format()
+      )
     }
   }
 };
