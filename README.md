@@ -2,16 +2,24 @@
 
 ---
 ## Features:
-YouTube
+#### YouTube
 - Fetch all videos in a given playlist (default set to mine)
 - Fetch details of each video from [YouTube Data API](https://developers.google.com/youtube/v3/)
 
-Musixmatch
+#### Musixmatch
 - Given Musizmatch only provides 30% of its lyrics for non-commercial use, I'm not using their api to get data
 - Instead, fetch lyrics by matching song title and artist name
 - Embed iFrame from Musixmatch
 
+#### Javascript Promises: Asyns & Await  
+When requesting for a playlist using [Playlists API](https://developers.google.com/youtube/v3/docs/playlists/list), the data responsed back doesn't include details like video duration or channel name. The workaround was once I get all the videoIDs from the first call, then use async & await for making a second call with [Videos API](https://developers.google.com/youtube/v3/docs/videos/list) to fetch details of those videos.
+ 
 ## Stacks:
-- Frontend: Vue.js  
-- HTTP client: [axios](https://github.com/axios/axios)  
-- API: YouTube Data API  
+#### Frontend 
+- Vue.js  
+
+#### HTTP client  
+- [axios](https://github.com/axios/axios)  
+
+#### API  
+- YouTube Data API  
