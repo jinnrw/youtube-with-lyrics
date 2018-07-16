@@ -4,7 +4,7 @@
 ## Features:
 #### YouTube
 - Fetch all videos in a given playlist (default set to mine)
-- Fetch details of each video from [YouTube Data API](https://developers.google.com/youtube/v3/)
+- Fetch details of each video from YouTube Data API
 
 #### Musixmatch
 - Given Musizmatch only provides 30% of its lyrics for non-commercial use, I'm not using their api to get data
@@ -17,9 +17,12 @@ When requesting for a playlist using [Playlists API](https://developers.google.c
 ## Stacks:
 #### Frontend 
 - Vue.js  
+- Vuex (State Management)
+- Moment.js (Video duration format)
 
 #### HTTP client  
 - [axios](https://github.com/axios/axios)  
 
 #### API  
-- YouTube Data API  
+- [YouTube Data API](https://developers.google.com/youtube/v3/) 
+- [Musixmatch API](https://developer.musixmatch.com/documentation/api-reference/matcher-lyrics-get)
