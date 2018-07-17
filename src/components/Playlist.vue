@@ -3,7 +3,7 @@
     <div id="video" v-html="videoIframe"></div>
     <div class="video-list">
       <div v-for="(video, i) in playlist" v-bind:key="video.snippet.resourceId.videoId" 
-      @click="updateVideo(video.snippet.resourceId.videoId)" class="video-item">
+      @click="updateVideo(video.snippet.resourceId.videoId, video.snippet.title, videoChannelTitle[i] )" class="video-item">
         <div class="video-item_thumb">
           <img v-bind:src="video.snippet.thumbnails.medium.url" alt="">
         </div>
@@ -19,19 +19,41 @@
 
 <script>
 import axios from "axios";
-var moment = require('moment');
+const jsonp = require("jsonp");
+var moment = require("moment");
 var momentDurationFormatSetup = require("moment-duration-format");
 
 export default {
   name: "Playlist",
-  data() {
-    return {
-      videoIframe: "",
-      playlist: [],
-      videoIDList: [],
-      videoDuration: [],
-      videoChannelTitle: []
-    };
+  // data() {
+  //   // return {
+  //   //   videoIframe: "",
+  //   //   playlist: [],
+  //   //   videoIDList: [],
+  //   //   videoDuration: [],
+  //   //   videoChannelTitle: [],
+  //   //   lyrics: ""
+  //   // };
+  // },
+  computed: {
+    videoIframe() {
+      return this.$store.state.videoIframe;
+    },
+    playlist() {
+      return this.$store.state.playlist;
+    },
+    videoIDList() {
+      return this.$store.state.videoIDList;
+    },
+    videoDuration() {
+      return this.$store.state.videoDuration;
+    },
+    videoChannelTitle() {
+      return this.$store.state.videoChannelTitle;
+    },
+    lyrics() {
+      return this.$store.state.lyrics;
+    }
   },
   mounted() {
     const service = {
@@ -52,14 +74,9 @@ export default {
           .then(response => {
             let id = response.data.items[0].snippet.resourceId.videoId;
             let playlist = response.data.items;
-            for (let i = 0; i < playlist.length; i++) {
-              let videoID = playlist[i].snippet.resourceId.videoId;
-              this.videoIDList.push(videoID);
-              // console.log(this.videoIDList);
-            }
-
             this.embedVideo(id);
-            this.playlist = playlist;
+            this.$store.state.playlist = playlist;
+            this.$store.commit("getAllVideoID");
           })
           .catch(function(error) {
             console.log(error);
@@ -83,12 +100,15 @@ export default {
             })
             .then(response => {
               let videoDetails = response.data.items;
+              let firstVideoDetailsSnippet = videoDetails[0].snippet;
               for (let i = 0; i < videoDetails.length; i++) {
                 let duration = videoDetails[i].contentDetails.duration;
                 let channelTitle = videoDetails[i].snippet.channelTitle;
                 this.videoDuration.push(duration);
                 this.videoChannelTitle.push(channelTitle);
               }
+              this.updateLyrics(firstVideoDetailsSnippet.title, firstVideoDetailsSnippet.channelTitle);
+              this.getCurrentVideo(firstVideoDetailsSnippet.title, firstVideoDetailsSnippet.channelTitle);
             })
             .catch(function(error) {
               console.log(error);
@@ -97,33 +117,55 @@ export default {
       }
     };
 
-    // Want to use async/await? Add the `async` keyword to your outer function/method.
     async function getYoutubeData() {
       try {
         const resPlaylist = await service.getPlaylist();
         const resVideoID = await service.getVideoID();
-
-        // console.log("resPlaylist: " + resPlaylist);
-        // console.log("resVIdeoID: " + resVideoID);
       } catch (error) {
         console.error(error);
       }
     }
     getYoutubeData();
-    // this.getVideoContentDetails();
   },
   methods: {
     embedVideo(id) {
-      this.videoIframe = `
+      this.$store.state.videoIframe = `
       <iframe id="video-iframe" width="560" height="315" src="https://www.youtube.com/embed/${id}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
     },
-    updateVideo(id) {
+    updateVideo(id, video, channel) {
       this.embedVideo(id);
+      this.updateLyrics(video, channel);
+      this.getCurrentVideo(video, channel)
     },
+    updateLyrics(video, channel) {
+      var key = "56d2a192d33f91c1c6d3700e72dac916";
+      var q_track = video.replace(/ /g, "%20");
+      var q_artist = channel.replace(/ /g, "%20");
+      var URL =
+        "https://api.musixmatch.com/ws/1.1/matcher.lyrics.get?format=jsonp&callback=callback&q_track=" +
+        q_track +
+        "&q_artist=" +
+        q_artist +
+        "&apikey=" +
+        key;
+      jsonp(URL, null, (err, data) => {
+        if (err) {
+          console.error(err.message);
+        } else {
+          if (typeof data.message.body !== 'undefined' && data.message.body.length == 0) {
+            this.$store.state.lyrics = this.$store.state.lyricsError;
+          } else {
+            this.$store.state.lyrics = data.message.body.lyrics.lyrics_body;
+          }
+        }
+      });
+    },
+     getCurrentVideo(video, channel) {
+      this.$store.state.currentVideoTitle = video;
+      this.$store.state.currentVideoChannel = channel;
+     },
     durationConvert(time) {
-      return(
-        moment.duration(time, "minutes").format()
-      )
+      return moment.duration(time, "minutes").format();
     }
   }
 };
@@ -145,7 +187,7 @@ export default {
     flex: 1;
 
     .video-title {
-        padding-bottom: 10px
+      padding-bottom: 10px;
     }
   }
 }
@@ -158,8 +200,15 @@ export default {
   overflow: hidden;
 
   img {
-    // max-width: 100%;
     max-height: 100%;
   }
+}
+
+.playlist {
+  margin-right: 60px;
+}
+
+#video-iframe {
+  width: 100%;
 }
 </style>
