@@ -25,6 +25,10 @@ export default {
 </script>
 
 <style lang="scss">
+// Variables
+$link-color: #5677fc;
+
+
 body {
   margin: 0;
 }
@@ -35,6 +39,10 @@ h3,
 h4,
 p {
   margin: 0;
+}
+
+a {
+  color: $link-color;
 }
 
 header {

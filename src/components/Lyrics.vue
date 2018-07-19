@@ -1,8 +1,15 @@
 <template>
   <div class="lyrics">
-    <h2 class="lyrics_title">{{ this.$store.state.currentVideoTitle }}</h2>
-    <p class="lyrics_channel">{{ this.$store.state.currentVideoChannel }}</p>
-   <p class="lyrics_content">{{ this.$store.state.lyrics }}</p>
+    <div class="lyrics_content">
+      <h2 class="lyrics_title">{{ this.$store.state.currentVideoTitle }}</h2>
+      <p class="lyrics_channel">{{ this.$store.state.currentVideoChannel }}</p>
+      <p class="lyrics_body">{{ this.$store.state.lyrics }}</p>
+      <div class="musixmatch-disclaimer">
+        <p>Lyrics are from Musixmatch API</p>
+ <p class="musixmatch-link">Visit <a href="https://www.musixmatch.com" target="_blank">Musixmatch</a> for full lyrics</p>
+      </div>
+     
+    </div>
   </div>
 </template>
 
@@ -20,16 +27,6 @@ export default {
   width: 40%;
   margin-left: 60px;
   color: #2c3e50;
-
-}
-
-.lyrics_title {
-  font-size: 45px;
-  margin-bottom: 10px;
-}
-
-.lyrics_channel {
-  font-size: 21px;
 }
 
 .lyrics_content {
@@ -37,13 +34,34 @@ export default {
   top: 20px;
   right: 0;
   margin: 0;
-  white-space: pre-wrap;
-  word-break: break-word;
-  margin-top: 16px;
-  padding-top: 16px;
-  padding-top: 1rem;
-  font-size: 18px;
-  line-height: 1.7;
-  font-weight: 400;
+
+  .lyrics_title {
+    font-size: 45px;
+    margin-bottom: 10px;
+  }
+
+  .lyrics_channel {
+    font-size: 21px;
+  }
+  .lyrics_body {
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-top: 16px;
+    padding-top: 16px;
+    padding-top: 1rem;
+    font-size: 18px;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+}
+
+.musixmatch-disclaimer {
+  font-size: 14px;
+  line-height: 18px;
+  margin-top: 30px;
+  padding: 10px 0;
+
+  .musixmatch-link {
+  }
 }
 </style>

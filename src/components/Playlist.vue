@@ -25,17 +25,18 @@ var momentDurationFormatSetup = require("moment-duration-format");
 
 export default {
   name: "Playlist",
-  // data() {
-  //   // return {
-  //   //   videoIframe: "",
-  //   //   playlist: [],
-  //   //   videoIDList: [],
-  //   //   videoDuration: [],
-  //   //   videoChannelTitle: [],
-  //   //   lyrics: ""
-  //   // };
-  // },
+  data() {
+    return {
+      // playlistID: this.$store.state.playlistID
+    };
+  },
   computed: {
+    playlistID() {
+      return this.$store.state.playlistID;
+    },
+    submitPlaylistID() {
+      return this.$store.state.submitPlaylistID;
+    },
     videoIframe() {
       return this.$store.state.videoIframe;
     },
@@ -56,78 +57,108 @@ export default {
     }
   },
   mounted() {
-    const service = {
-      getPlaylist: () => {
-        var key = "AIzaSyCGw4DYb8KrW9c0E7H6kwFdmcs-k49clBU";
-        var playlistId = "PLHAe5aDyb50vbEHNCgpkH0FSDNdQWv9Qh";
-        var URL = "https://www.googleapis.com/youtube/v3/playlistItems";
-        var options = {
-          part: "snippet",
-          key: key,
-          maxResults: 10,
-          playlistId: playlistId
-        };
-        const request = axios
-          .get(URL, {
-            params: options
-          })
-          .then(response => {
-            let id = response.data.items[0].snippet.resourceId.videoId;
-            let playlist = response.data.items;
-            this.embedVideo(id);
-            this.$store.state.playlist = playlist;
-            this.$store.commit("getAllVideoID");
-          })
-          .catch(function(error) {
-            console.log(error);
-          });
-        return request;
-      },
-      getVideoID: () => {
-        var key = "AIzaSyCGw4DYb8KrW9c0E7H6kwFdmcs-k49clBU";
-        var URL = "https://www.googleapis.com/youtube/v3/videos";
-        var options = {
-          part: "snippet,contentDetails,statistics",
-          key: key,
-          maxResults: 10,
-          id: this.videoIDList.join()
-        };
-        const request =
-          // GET YouTube Content Details via VideoID
-          axios
+    this.updateYoutubeData();
+  },
+  watch: {
+    submitPlaylistID: function() {
+      this.updateYoutubeData();
+      console.log(this.$store.state.submitPlaylistID);
+      console.log("updating playlistID");
+    }
+  },
+  methods: {
+    updateYoutubeData() {
+      const service = {
+        getPlaylist: () => {
+          var key = "AIzaSyCGw4DYb8KrW9c0E7H6kwFdmcs-k49clBU";
+          var playlistId = this.$store.state.playlistID;
+          var URL = "https://www.googleapis.com/youtube/v3/playlistItems";
+          var options = {
+            part: "snippet",
+            key: key,
+            maxResults: 10,
+            playlistId: playlistId
+          };
+          const request = axios
             .get(URL, {
               params: options
             })
             .then(response => {
-              let videoDetails = response.data.items;
-              let firstVideoDetailsSnippet = videoDetails[0].snippet;
-              for (let i = 0; i < videoDetails.length; i++) {
-                let duration = videoDetails[i].contentDetails.duration;
-                let channelTitle = videoDetails[i].snippet.channelTitle;
-                this.videoDuration.push(duration);
-                this.videoChannelTitle.push(channelTitle);
-              }
-              this.updateLyrics(firstVideoDetailsSnippet.title, firstVideoDetailsSnippet.channelTitle);
-              this.getCurrentVideo(firstVideoDetailsSnippet.title, firstVideoDetailsSnippet.channelTitle);
+              let id = response.data.items[0].snippet.resourceId.videoId;
+              let playlist = response.data.items;
+              this.embedVideo(id);
+              this.$store.commit("setPlaylist", playlist);
+              this.$store.commit("setAllVideoID");
             })
             .catch(function(error) {
               console.log(error);
             });
-        return request;
-      }
-    };
+          return request;
+        },
+        getVideoID: () => {
+          var key = "AIzaSyCGw4DYb8KrW9c0E7H6kwFdmcs-k49clBU";
+          var URL = "https://www.googleapis.com/youtube/v3/videos";
+          var options = {
+            part: "snippet,contentDetails,statistics",
+            key: key,
+            maxResults: 10,
+            id: this.videoIDList.join()
+          };
 
-    async function getYoutubeData() {
-      try {
-        const resPlaylist = await service.getPlaylist();
-        const resVideoID = await service.getVideoID();
-      } catch (error) {
-        console.error(error);
+          this.$store.state.videoChannelTitle = [];
+
+          const request =
+            // GET YouTube Content Details via VideoID
+            axios
+              .get(URL, {
+                params: options
+              })
+              .then(response => {
+                console.log("video details: " + videoDetails);
+                let videoDetails = response.data.items;
+                console.log(videoDetails);
+                let firstVideoDetailsSnippet = videoDetails[0].snippet;
+                
+                  this.$store.state.videoDuration[this.$store.state.index] = [];
+
+                for (let i = 0; i < videoDetails.length; i++) {
+                  let duration = videoDetails[i].contentDetails.duration;
+                  let channelTitle = videoDetails[i].snippet.channelTitle;
+                  console.log(this.$store.state.index);
+    
+                  this.$store.state.videoDuration[this.$store.state.index].push(duration);
+                  this.$store.state.videoChannelTitle.push(channelTitle);
+                }
+
+                this.$store.state.index++;
+
+                this.updateLyrics(
+                  firstVideoDetailsSnippet.title,
+                  firstVideoDetailsSnippet.channelTitle
+                );
+                this.getCurrentVideo(
+                  firstVideoDetailsSnippet.title,
+                  firstVideoDetailsSnippet.channelTitle
+                );
+                videoDetails = null
+              })
+              .catch(function(error) {
+                console.log(error);
+              });
+          return request;
+        }
+      };
+
+      async function getYoutubeData() {
+        try {
+          const resPlaylist = await service.getPlaylist();
+          const resVideoID = await service.getVideoID();
+        } catch (error) {
+          console.error(error);
+        }
       }
-    }
-    getYoutubeData();
-  },
-  methods: {
+      getYoutubeData();
+    },
     embedVideo(id) {
       this.$store.state.videoIframe = `
       <iframe id="video-iframe" width="560" height="315" src="https://www.youtube.com/embed/${id}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
@@ -135,7 +166,7 @@ export default {
     updateVideo(id, video, channel) {
       this.embedVideo(id);
       this.updateLyrics(video, channel);
-      this.getCurrentVideo(video, channel)
+      this.getCurrentVideo(video, channel);
     },
     updateLyrics(video, channel) {
       var key = "56d2a192d33f91c1c6d3700e72dac916";
@@ -152,7 +183,10 @@ export default {
         if (err) {
           console.error(err.message);
         } else {
-          if (typeof data.message.body !== 'undefined' && data.message.body.length == 0) {
+          if (
+            typeof data.message.body !== "undefined" &&
+            data.message.body.length == 0
+          ) {
             this.$store.state.lyrics = this.$store.state.lyricsError;
           } else {
             this.$store.state.lyrics = data.message.body.lyrics.lyrics_body;
@@ -160,10 +194,10 @@ export default {
         }
       });
     },
-     getCurrentVideo(video, channel) {
+    getCurrentVideo(video, channel) {
       this.$store.state.currentVideoTitle = video;
       this.$store.state.currentVideoChannel = channel;
-     },
+    },
     durationConvert(time) {
       return moment.duration(time, "minutes").format();
     }
@@ -172,6 +206,7 @@ export default {
 </script>
 <style scoped lang="scss">
 #video {
+  background-color: #f8f8f8;
   margin-bottom: 60px;
 }
 
