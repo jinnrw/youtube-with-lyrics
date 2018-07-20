@@ -1,9 +1,9 @@
 <template>
   <div class="lyrics">
     <div class="lyrics_content">
-      <h2 class="lyrics_title">{{ this.$store.state.currentVideoTitle }}</h2>
-      <p class="lyrics_channel">{{ this.$store.state.currentVideoChannel }}</p>
-      <p class="lyrics_body">{{ this.$store.state.lyrics }}</p>
+      <h2 class="lyrics_title">{{ currentVideoTitle }}</h2>
+      <p class="lyrics_channel">{{ currentVideoChannel }}</p>
+      <p class="lyrics_body">{{ lyrics }}</p>
       <div class="musixmatch-disclaimer">
         <p>Lyrics are from Musixmatch API</p>
  <p class="musixmatch-link">Visit <a href="https://www.musixmatch.com" target="_blank">Musixmatch</a> for full lyrics</p>
@@ -17,6 +17,17 @@
 export default {
   name: "Lyrics",
   props: {},
+  computed: {
+    currentVideoTitle() {
+      return this.$store.state.currentVideoTitle;
+    },
+    currentVideoChannel() {
+      return this.$store.state.currentVideoChannel;
+    },
+    lyrics() {
+      return this.$store.state.lyrics;
+    }
+  },
   methods: {}
 };
 </script>
@@ -30,9 +41,9 @@ export default {
 }
 
 .lyrics_content {
-  position: sticky;
-  top: 20px;
-  right: 0;
+  // position: sticky;
+  // top: 20px;
+  // right: 0;
   margin: 0;
 
   .lyrics_title {

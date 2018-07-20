@@ -6,23 +6,27 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
   state: {
     playlistID: "PLHAe5aDyb50vbEHNCgpkH0FSDNdQWv9Qh",
-    submitPlaylistID: false,
+    submitPlaylistID: 0,
+    submitVideoID: 0,
     videoIframe: "",
     playlist: [],
+    videoID: "",
     videoIDList: [],
     videoDuration: [],
+    videoTitle: [],
     videoChannelTitle: [],
     lyrics: "",
     lyricsError: "No results found in Musixmatch",
     currentVideoTitle: "",
     currrentVideoChannel: "",
-    index: 0
   },
   mutations: {
     setPlaylist(state, playlist) {
+      state.playlist = [];
       state.playlist = playlist;
     },
     setAllVideoID: state => {
+      state.videoIDList = []; // Reset videoIDList
       for (let i = 0; i < state.playlist.length; i++) {
         let videoID = state.playlist[i].snippet.resourceId.videoId;
         state.videoIDList.push(videoID);
@@ -31,15 +35,21 @@ export const store = new Vuex.Store({
     updatePlaylistID(state, playlistID) {
       state.playlistID = playlistID
     },
-    submitPlaylistID: state => {
-      state.submitPlaylistID = !state.submitPlaylistID;
+    updateVideoID(state, videoID) {
+      state.videoIDList = []; // Reset videoIDList
+      state.videoIDList.push(videoID)
+      state.videoID = videoID; // Reset videoIDList
     },
-    resetVideoChannelTitle: (state, resetVideoChannelTitle) => {
-      // Object.keys(state).forEach(key => {
-      //   state[key] = s[key]
-      // })
-        
-      console.log("reset videoChannelTitle" + state.videoChannelTitle);
+    submitPlaylistID: state => {
+      state.submitPlaylistID++;
+    },
+    submitVideoID: state => {
+      state.submitVideoID++;
+    },
+    resetVideoDetails: (state) => {
+      state.videoTitle = [];
+      state.videoChannelTitle = [];
+      state.videoDuration = [];
     }
   }
 })

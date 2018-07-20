@@ -2,13 +2,13 @@
   <div class="playlist">
     <div id="video" v-html="videoIframe"></div>
     <div class="video-list">
-      <div v-for="(video, i) in playlist" v-bind:key="video.snippet.resourceId.videoId" 
-      @click="updateVideo(video.snippet.resourceId.videoId, video.snippet.title, videoChannelTitle[i] )" class="video-item">
+      <div v-for="(video, i) in playlist" v-bind:key="videoIDList[i]" 
+      @click="updateVideo(videoIDList[i], videoTitle[i], videoChannelTitle[i])" class="video-item" v-bind:class="{active: videoTitle[i] === currentVideoTitle}">
         <div class="video-item_thumb">
           <img v-bind:src="video.snippet.thumbnails.medium.url" alt="">
         </div>
         <div class="titles">
-          <h4 class="video-title">{{ video.snippet.title }}</h4>
+          <h4 class="video-title">{{ videoTitle[i] }}</h4>
          <p>{{ videoChannelTitle[i] }}</p>
         </div>
         <p class="channel-title">{{ durationConvert(videoDuration[i]) }}</p>
@@ -27,7 +27,7 @@ export default {
   name: "Playlist",
   data() {
     return {
-      // playlistID: this.$store.state.playlistID
+
     };
   },
   computed: {
@@ -36,6 +36,9 @@ export default {
     },
     submitPlaylistID() {
       return this.$store.state.submitPlaylistID;
+    },
+    submitVideoID() {
+      return this.$store.state.submitVideoID;
     },
     videoIframe() {
       return this.$store.state.videoIframe;
@@ -49,25 +52,29 @@ export default {
     videoDuration() {
       return this.$store.state.videoDuration;
     },
+    videoTitle() {
+      return this.$store.state.videoTitle;
+    },
     videoChannelTitle() {
       return this.$store.state.videoChannelTitle;
     },
-    lyrics() {
-      return this.$store.state.lyrics;
+    currentVideoTitle() {
+      return this.$store.state.currentVideoTitle;
     }
   },
   mounted() {
-    this.updateYoutubeData();
+    this.updateYoutubeData("getPlaylist");
   },
   watch: {
     submitPlaylistID: function() {
-      this.updateYoutubeData();
-      console.log(this.$store.state.submitPlaylistID);
-      console.log("updating playlistID");
+      this.updateYoutubeData("getPlaylist");
+    },
+    submitVideoID: function() {
+      this.updateYoutubeData("getVideo");
     }
   },
   methods: {
-    updateYoutubeData() {
+    updateYoutubeData(type) {
       const service = {
         getPlaylist: () => {
           var key = "AIzaSyCGw4DYb8KrW9c0E7H6kwFdmcs-k49clBU";
@@ -86,7 +93,6 @@ export default {
             .then(response => {
               let id = response.data.items[0].snippet.resourceId.videoId;
               let playlist = response.data.items;
-              this.embedVideo(id);
               this.$store.commit("setPlaylist", playlist);
               this.$store.commit("setAllVideoID");
             })
@@ -95,18 +101,15 @@ export default {
             });
           return request;
         },
-        getVideoID: () => {
+        getVideo: () => {
           var key = "AIzaSyCGw4DYb8KrW9c0E7H6kwFdmcs-k49clBU";
           var URL = "https://www.googleapis.com/youtube/v3/videos";
           var options = {
-            part: "snippet,contentDetails,statistics",
+            part: "snippet,contentDetails",
             key: key,
             maxResults: 10,
             id: this.videoIDList.join()
           };
-
-          this.$store.state.videoChannelTitle = [];
-
           const request =
             // GET YouTube Content Details via VideoID
             axios
@@ -114,24 +117,25 @@ export default {
                 params: options
               })
               .then(response => {
-                console.log("video details: " + videoDetails);
                 let videoDetails = response.data.items;
-                console.log(videoDetails);
                 let firstVideoDetailsSnippet = videoDetails[0].snippet;
-                
-                  this.$store.state.videoDuration[this.$store.state.index] = [];
-
+                let firstVideoID = videoDetails[0].id;
+                // When getVideo, assign the single video response to Playlist
+                if (type === "getVideo") {
+                  this.$store.commit("setPlaylist", videoDetails);
+                }
+                this.$store.commit("resetVideoDetails");
                 for (let i = 0; i < videoDetails.length; i++) {
                   let duration = videoDetails[i].contentDetails.duration;
+                  let videoTitle = videoDetails[i].snippet.title;
                   let channelTitle = videoDetails[i].snippet.channelTitle;
-                  console.log(this.$store.state.index);
-    
-                  this.$store.state.videoDuration[this.$store.state.index].push(duration);
+                  this.$store.state.videoTitle.push(videoTitle);
                   this.$store.state.videoChannelTitle.push(channelTitle);
+                  this.$store.state.videoDuration.push(duration);
                 }
+                  // console.log(this.$store.state.videoChannelTitle);
 
-                this.$store.state.index++;
-
+                this.embedVideo(firstVideoID);
                 this.updateLyrics(
                   firstVideoDetailsSnippet.title,
                   firstVideoDetailsSnippet.channelTitle
@@ -140,7 +144,6 @@ export default {
                   firstVideoDetailsSnippet.title,
                   firstVideoDetailsSnippet.channelTitle
                 );
-                videoDetails = null
               })
               .catch(function(error) {
                 console.log(error);
@@ -152,16 +155,21 @@ export default {
       async function getYoutubeData() {
         try {
           const resPlaylist = await service.getPlaylist();
-          const resVideoID = await service.getVideoID();
+          const resVideoID = await service.getVideo();
         } catch (error) {
           console.error(error);
         }
       }
-      getYoutubeData();
+
+      if (type === "getPlaylist") {
+        getYoutubeData();
+      } else {
+        service.getVideo();
+      }
     },
     embedVideo(id) {
       this.$store.state.videoIframe = `
-      <iframe id="video-iframe" width="560" height="315" src="https://www.youtube.com/embed/${id}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+      <iframe id="video-iframe" width="560" height="315" src="https://www.youtube.com/embed/${id}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
     },
     updateVideo(id, video, channel) {
       this.embedVideo(id);
@@ -215,8 +223,17 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 12px 8px;
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid #f8f8f8;
   cursor: pointer;
+  transition: 0.3s background-color ease; 
+
+  &.active {
+    background-color: #f8f8f8;
+  }
+
+  &:hover {
+    background-color: #f8f8f8;
+  }
 
   .titles {
     flex: 1;
