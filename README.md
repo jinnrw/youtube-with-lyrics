@@ -1,7 +1,5 @@
 # YouTube with Lyrics
 
----
-
 ### Run on local:
 1. Clone or Fork repo.
 2. Run `npm install`
