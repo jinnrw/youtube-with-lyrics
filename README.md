@@ -1,12 +1,12 @@
 # YouTube with Lyrics
 
-### Run on local
 ---
+
+### Run on local:
 1. Clone or Fork repo.
 2. Run `npm install`
 3. Run `npm run serve`
 
----
 ## Features:
 #### YouTube
 - Fetch all videos in a given playlist (default set to mine)
