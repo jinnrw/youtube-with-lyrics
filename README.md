@@ -1,10 +1,5 @@
 # YouTube with Lyrics
 
-## Run on local:
-1. Clone or Fork repo.
-2. Run `npm install`
-3. Run `npm run serve`
-
 ## Features:
 #### YouTube
 - Fetch all videos in a given playlist (default set to mine)
@@ -41,6 +36,11 @@ https://www.youtube.com/watch?v=OPKTk5vUtDY
 #### API  
 - [YouTube Data API](https://developers.google.com/youtube/v3/) 
 - [Musixmatch API](https://developer.musixmatch.com/documentation/api-reference/matcher-lyrics-get)
+
+## Run on local:
+1. Clone or Fork repo.
+2. Run `npm install`
+3. Run `npm run serve`
 
 ---
 
