@@ -37,6 +37,9 @@ https://www.youtube.com/watch?v=OPKTk5vUtDY
 - [YouTube Data API](https://developers.google.com/youtube/v3/) 
 - [Musixmatch API](https://developer.musixmatch.com/documentation/api-reference/matcher-lyrics-get)
 
+## Live Demo:
+View [live demo](https://jinnrw.github.io/youtube-with-lyrics/) here.
+
 ## Run on local:
 1. Clone or Fork repo.
 2. Run `npm install`
