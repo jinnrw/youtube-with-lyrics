@@ -1,6 +1,9 @@
 # YouTube with Lyrics
 
-## Features:
+## Live Demo
+View [live demo](https://jinnrw.github.io/youtube-with-lyrics/) here.
+
+## Features
 #### YouTube
 - Fetch all videos in a given playlist (default set to mine)
 - Fetch details of each video from YouTube Data API
@@ -13,7 +16,7 @@
 #### Javascript Promises: Asyns & Await  
 When requesting for a playlist using [Playlists API](https://developers.google.com/youtube/v3/docs/playlists/list), the data responsed back doesn't include details like video duration or channel name. The workaround was once I get all the videoIDs from the first call, then use async & await for making a second call with [Videos API](https://developers.google.com/youtube/v3/docs/videos/list) to fetch details of those videos.
  
-#### Seach By Types:
+#### Seach By Types
 You can search by a Playlist ID or Video ID, it will make a HTTP request accordingly.  
 
 Example:  
@@ -24,7 +27,7 @@ https://www.youtube.com/watch?v=OPKTk5vUtDY
  
  
  
-## Stacks:
+## Stacks
 #### Frontend 
 - Vue.js  
 - Vuex (State Management)
@@ -37,10 +40,7 @@ https://www.youtube.com/watch?v=OPKTk5vUtDY
 - [YouTube Data API](https://developers.google.com/youtube/v3/) 
 - [Musixmatch API](https://developer.musixmatch.com/documentation/api-reference/matcher-lyrics-get)
 
-## Live Demo:
-View [live demo](https://jinnrw.github.io/youtube-with-lyrics/) here.
-
-## Run on local:
+## Run on local
 1. Clone or Fork repo.
 2. Run `npm install`
 3. Run `npm run serve`
