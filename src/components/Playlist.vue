@@ -83,7 +83,7 @@ export default {
           var options = {
             part: "snippet",
             key: key,
-            maxResults: 10,
+            maxResults: 50,
             playlistId: playlistId
           };
           const request = axios
