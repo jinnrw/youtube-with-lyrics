@@ -1,7 +1,7 @@
 # YouTube with Lyrics
 
 ## Live Demo
-View [live demo](https://jinnrw.github.io/youtube-with-lyrics/) here.
+View [live demo](https://youtube-with-lyrics.vercel.app/) here.
 
 ## Features
 #### YouTube
@@ -9,9 +9,10 @@ View [live demo](https://jinnrw.github.io/youtube-with-lyrics/) here.
 - Fetch details of each video from YouTube Data API
 
 #### Musixmatch
-- Given Musizmatch only provides 30% of its lyrics for non-commercial use, I'm not using their api to get data
-- Instead, fetch lyrics by matching song title and artist name
-- Embed iFrame from Musixmatch
+- Musizmatch only provides 30% of its lyrics for non-commercial use
+- Use [matcher.lyrics.get](https://developer.musixmatch.com/documentation/api-reference/matcher-lyrics-get) API method
+  - param: `(q_track, q_artist)`
+
 
 #### Javascript Promises: Asyns & Await  
 When requesting for a playlist using [Playlists API](https://developers.google.com/youtube/v3/docs/playlists/list), the data responsed back doesn't include details like video duration or channel name. The workaround was once I get all the videoIDs from the first call, then use async & await for making a second call with [Videos API](https://developers.google.com/youtube/v3/docs/videos/list) to fetch details of those videos.
