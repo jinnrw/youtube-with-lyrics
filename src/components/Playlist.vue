@@ -77,7 +77,7 @@ export default {
     updateYoutubeData(type) {
       const service = {
         getPlaylist: () => {
-          var key = "AIzaSyCGw4DYb8KrW9c0E7H6kwFdmcs-k49clBU";
+          var key = "AIzaSyDPqm6Ilt2gMJ3DMCC_8BIR7XcFB9xyW-U";
           var playlistId = this.$store.state.playlistID;
           var URL = "https://www.googleapis.com/youtube/v3/playlistItems";
           var options = {
@@ -102,7 +102,7 @@ export default {
           return request;
         },
         getVideo: () => {
-          var key = "AIzaSyCGw4DYb8KrW9c0E7H6kwFdmcs-k49clBU";
+          var key = "AIzaSyDPqm6Ilt2gMJ3DMCC_8BIR7XcFB9xyW-U";
           var URL = "https://www.googleapis.com/youtube/v3/videos";
           var options = {
             part: "snippet,contentDetails",
