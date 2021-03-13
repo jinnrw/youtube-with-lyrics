@@ -1,5 +1,7 @@
 # YouTube with Lyrics
 
+![YouTube with Lyrics](https://jinnwang-site.web.app/img/youtube-with-lyrics.png)
+
 ## Live Demo
 View [live demo](https://youtube-with-lyrics.vercel.app/) here.
 
@@ -48,4 +50,3 @@ https://www.youtube.com/watch?v=OPKTk5vUtDY
 
 ---
 
-![YouTube with Lyrics](https://jinnwang-site.web.app/img/youtube-with-lyrics.png)
