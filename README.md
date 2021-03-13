@@ -47,6 +47,3 @@ https://www.youtube.com/watch?v=OPKTk5vUtDY
 1. Clone or Fork repo.
 2. Run `npm install`
 3. Run `npm run serve`
-
----
-
