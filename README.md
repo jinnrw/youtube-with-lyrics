@@ -1,8 +1,7 @@
 # YouTube with Lyrics
 
 ## Live Demo
-~~View [live demo](https://jinnrw.github.io/youtube-with-lyrics/) here.~~ 
-(Google API made some changes, demo is not available at this point)
+View [live demo](https://jinnrw.github.io/youtube-with-lyrics/) here.
 
 ## Features
 #### YouTube
